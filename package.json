@@ -1,7 +1,7 @@
 {
   "name": "@mohayonao/pink-noise-source",
   "description": "PinkNoiseSourceNode for Web Audio API",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "author": "mohayonao <mohayonao@gmail.com>",
   "bugs": {
     "url": "https://github.com/mohayonao/pink-noise-source/issues"
