@@ -15,7 +15,8 @@
     "isparta": "^3.0.4",
     "mocha": "^2.2.5",
     "power-assert": "^1.0.0",
-    "sinon": "^1.16.1"
+    "sinon": "^1.16.1",
+    "web-audio-test-api": "^0.3.6"
   },
   "files": [
     "package.json",
