@@ -1,12 +1,14 @@
 {
   "name": "@mohayonao/pink-noise-source",
   "description": "PinkNoiseSourceNode for Web Audio API",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "author": "mohayonao <mohayonao@gmail.com>",
   "bugs": {
     "url": "https://github.com/mohayonao/pink-noise-source/issues"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@mohayonao/web-audio-utils": "^0.4.0"
+  },
   "devDependencies": {
     "babel": "^5.8.23",
     "babel-eslint": "^4.1.0",
@@ -15,7 +17,8 @@
     "isparta": "^3.0.4",
     "mocha": "^2.2.5",
     "power-assert": "^1.0.0",
-    "sinon": "^1.16.1"
+    "sinon": "^1.16.1",
+    "web-audio-test-api": "^0.3.6"
   },
   "files": [
     "package.json",
