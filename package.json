@@ -1,10 +1,10 @@
 {
-  "name": "pink-noise-source",
-  "description": "PinkNoiseSourceNode for Web Audio API",
+  "name": "pink-noise-node",
+  "description": "PinkNoiseNode for Web Audio API",
   "version": "1.0.0",
   "author": "Nao Yonamine <mohayonao@gmail.com>",
   "bugs": {
-    "url": "https://github.com/mohayonao/pink-noise-source/issues"
+    "url": "https://github.com/mohayonao/pink-noise-node/issues"
   },
   "devDependencies": {
     "browserify": "^13.0.1",
@@ -18,21 +18,21 @@
     "package.json",
     "README.md"
   ],
-  "homepage": "https://github.com/mohayonao/pink-noise-source/",
+  "homepage": "https://github.com/mohayonao/pink-noise-node/",
   "keywords": [
     "webaudioapi",
     "pinknoise"
   ],
   "license": "MIT",
-  "main": "lib/PinkNoiseSourceNode.js",
+  "main": "lib/PinkNoiseNode.js",
   "repository": {
     "type": "git",
-    "url": "http://github.com/mohayonao/pink-noise-source.git"
+    "url": "http://github.com/mohayonao/pink-noise-node.git"
   },
   "scripts": {
     "build": "npm run build-browser && npm run build-minify",
-    "build-browser": "browserify lib/PinkNoiseSourceNode.js --standalone PinkNoiseSourceNode -o build/pink-noise-source.js",
-    "build-minify": "uglifyjs build/pink-noise-source.js -o build/pink-noise-source.min.js",
+    "build-browser": "browserify lib/PinkNoiseNode.js --standalone PinkNoiseNode -o build/pink-noise-node.js",
+    "build-minify": "uglifyjs build/pink-noise-node.js -o build/pink-noise-node.min.js",
     "cover": "istanbul cover node_modules/mocha/bin/_mocha",
     "gh-pages": "git checkout gh-pages && git merge master && git push origin gh-pages && git checkout master",
     "postversion": "git push && git push --tags",
