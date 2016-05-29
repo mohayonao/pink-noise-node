@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>PinkNoiseSourceNode</title>
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <link rel="stylesheet" href=//cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css>
+  <style>
+      #code { padding: 0; margin: 0; background: white; border: none }
+      #app { margin: 10px 0 }
+      #app .btn { width: 100px }
+    </style>
+</head>
+<body>
+  <div class="container">
+    <div class="page-header">
+      <h1>pink-noise-source</h1>
+      <div>
+        <a href="https://travis-ci.org/mohayonao/pink-noise-source"><img src="http://img.shields.io/travis/mohayonao/pink-noise-source.svg?style=flat-square"/></a>
+        <a href="https://www.npmjs.org/package/pink-noise-source"><img src="http://img.shields.io/npm/v/pink-noise-source.svg?style=flat-square"/></a>
+        <a href="http://mohayonao.mit-license.org/"><img src="http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square"/></a>
+      </div>
+    </div>
+    <div>PinkNoise AudioNode for Web Audio API | <a href="https://github.com/mohayonao/pink-noise-source" target="github">GitHub</a></div>
+    <div id="app">
+      <div>
+        <div class="form-group row">
+          <div class="col-sm-2">
+            <button class="btn btn-default" v-on:click="play">{{ isPlaying ? "Stop" : "Start" }}</button>
+          </div>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">example</h3>
+        </div>
+        <div class="panel-body">
+          <pre class="prettyprint" id="code"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/vue/1.0.24/vue.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.js"></script>
+  <script src="//mohayonao.github.io/web-audio-scheduler/build/web-audio-scheduler.min.js"></script>
+  <script src="build/pink-noise-source.js"></script>
+  <script>
+  window.AudioContext = window.AudioContext || window.webkitAudioContext;
+
+  window.addEventListener("DOMContentLoaded", function() {
+    "use strict";
+
+    window.app = new Vue({
+      el: "#app",
+      data: {
+        isPlaying: false
+      },
+      methods: {
+        play: function() {
+          this.isPlaying = !this.isPlaying;
+
+          if (this.isPlaying) {
+            sched.start(compose);
+          } else {
+            sched.stop(true);
+          }
+        }
+      }
+    });
+
+    // code
+    document.getElementById("code").textContent = document.getElementById("example").textContent;
+
+    prettyPrint();
+  });
+  </script>
+  <script id="example">
+    var audioContext = new AudioContext();
+    var sched = new WebAudioScheduler({ context: audioContext });
+
+    function kick(e) {
+      var t0 = e.playbackTime;
+      var t1 = t0 + e.args.dur;
+      var oscillator = audioContext.createOscillator();
+      var gain1 = audioContext.createGain();
+      var noise = new PinkNoiseSourceNode(audioContext);
+      var biquadFilter = audioContext.createBiquadFilter();
+      var gain = audioContext.createGain();
+
+      oscillator.type = "triangle";
+      oscillator.frequency.setValueAtTime(120, t0);
+      oscillator.frequency.exponentialRampToValueAtTime(40, t1);
+      oscillator.start(t0);
+      oscillator.stop(t1);
+      oscillator.connect(gain1);
+
+      gain1.gain.setValueAtTime(e.args.amp, t0);
+      gain1.gain.linearRampToValueAtTime(0.0, t1);
+      gain1.connect(audioContext.destination);
+
+      noise.start(t0);
+      noise.stop(t1);
+      noise.connect(biquadFilter);
+
+      biquadFilter.type = "lowpass";
+      biquadFilter.frequency.value = 800;
+      biquadFilter.Q.value = 24;
+      biquadFilter.connect(gain);
+
+      gain.gain.setValueAtTime(0.01, t0);
+      gain.gain.linearRampToValueAtTime(0.0, t1);
+      gain.connect(audioContext.destination);
+    }
+
+    function snare(e) {
+      var t0 = e.playbackTime;
+      var t1 = t0 + e.args.dur;
+      var noise = new PinkNoiseSourceNode(audioContext);
+      var biquadFilter = audioContext.createBiquadFilter();
+      var gain = audioContext.createGain();
+
+      noise.start(t0);
+      noise.stop(t1);
+      noise.connect(biquadFilter);
+
+      biquadFilter.type = "highpass";
+      biquadFilter.frequency.setValueAtTime(t0, 1000);
+      biquadFilter.frequency.exponentialRampToValueAtTime(t1, 100);
+      biquadFilter.Q.value = 14;
+      biquadFilter.connect(gain);
+
+      gain.gain.setValueAtTime(e.args.amp, t0);
+      gain.gain.linearRampToValueAtTime(0.0, t1);
+      gain.connect(audioContext.destination);
+    }
+
+    function compose(e) {
+      var t0 = e.playbackTime;
+
+      [
+        { fn: kick , dur: 0.100, amp: 0.75 },
+        null,
+        { fn: snare, dur: 0.125, amp: 0.60 },
+        null,
+        { fn: kick , dur: 0.100, amp: 0.75 },
+        { fn: kick , dur: 0.080, amp: 0.50 },
+        { fn: snare, dur: 0.105, amp: 0.55 },
+        null,
+      ].forEach(function(args, index) {
+        if (args) {
+          sched.insert(t0 + index * 0.25, args.fn, args);
+        }
+      });
+
+      sched.insert(t0 + 2, compose);
+    }
+  </script>
+</body>
+</html>
