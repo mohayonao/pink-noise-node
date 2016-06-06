@@ -23,7 +23,7 @@
     "pinknoise"
   ],
   "license": "MIT",
-  "main": "lib/PinkNoiseNode.js",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "http://github.com/mohayonao/pink-noise-node.git"
